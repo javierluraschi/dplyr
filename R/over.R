@@ -3,7 +3,7 @@
 # over("avg(x)", order = "y")
 # over("avg(x)", order = c("x", "y"))
 # over("avg(x)")
-over <- function(expr, partition = NULL, order = NULL, frame = NULL) {
+over <- function(expr, partition = NULL, order = NULL, frame = NULL, con = NULL) {
   if (length(partition) == 0) {
     partition <- NULL
   }
@@ -13,14 +13,14 @@ over <- function(expr, partition = NULL, order = NULL, frame = NULL) {
     }
 
     partition <- build_sql("PARTITION BY ",
-      sql_vector(escape(partition), collapse = ", ", parens = FALSE))
+      sql_vector(escape(partition, con = con), collapse = ", ", parens = FALSE, con = con), con = con)
   }
   if (!is.null(order)) {
     if (!is.sql(order)) {
       order <- ident(order)
     }
 
-    order <- build_sql("ORDER BY ", sql_vector(escape(order), collapse = ", ", parens = FALSE))
+    order <- build_sql("ORDER BY ", sql_vector(escape(order, con = con), collapse = ", ", parens = FALSE, con = con), con = con)
   }
   if (!is.null(frame)) {
     if (is.null(order)) {

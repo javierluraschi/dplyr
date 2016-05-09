@@ -156,7 +156,8 @@ base_win <- sql_translator(
     over(
       build_sql("NTILE", list(as.integer(n))),
       partition_group(),
-      order_by %||% partition_order()
+      order_by %||% partition_order(),
+      con = partition_con()
     )
   },
 
@@ -183,24 +184,34 @@ base_win <- sql_translator(
     over(build_sql("NTH_VALUE", list(x)), partition_group(), order %||% partition$order())
   },
   first = function(x, order = NULL) {
-    over(build_sql("FIRST_VALUE", list(x)), partition_group(), order %||% partition_order())
+    over(build_sql("FIRST_VALUE",
+                   list(x)),
+                   partition_group(),
+                   order %||% partition_order(),
+                   con = partition_con())
   },
   last = function(x, order = NULL) {
-    over(build_sql("LAST_VALUE", list(x)), partition_group(), order %||% partition_order())
+    over(build_sql("LAST_VALUE",
+                   list(x)),
+                   partition_group(),
+                   order %||% partition_order(),
+                   con = partition_con())
   },
 
   lead = function(x, n = 1L, default = NA, order = NULL) {
     over(
       build_sql("LEAD", list(x, n, default)),
       partition_group(),
-      order %||% partition_order()
+      order %||% partition_order(),
+      con = partition_con()
     )
   },
   lag = function(x, n = 1L, default = NA, order = NULL) {
     over(
       build_sql("LAG", list(x, n, default)),
       partition_group(),
-      order %||% partition_order()
+      order %||% partition_order(),
+      con = partition_con()
     )
   },
 

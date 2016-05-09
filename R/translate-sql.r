@@ -148,6 +148,9 @@ translate_sql_ <- function(dots,
 
     old_order <- set_partition_order(vars_order)
     on.exit(set_partition_order(old_order), add = TRUE)
+
+    old_con <- set_partition_con(con)
+    on.exit(set_partition_con(old_con), add = TRUE)
   }
 
   pieces <- lapply(expr, function(x) {

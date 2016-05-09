@@ -143,7 +143,10 @@ sql_not_supported <- function(f) {
 win_rank <- function(f) {
   force(f)
   function(order = NULL) {
-    over(build_sql(sql(f), list()), partition_group(), order %||% partition_order())
+    over(build_sql(sql(f), list()),
+         partition_group(),
+         order %||% partition_order(),
+         con = partition_con())
   }
 }
 win_recycled <- function(f) {
@@ -155,7 +158,11 @@ win_recycled <- function(f) {
 win_cumulative <- function(f) {
   force(f)
   function(x) {
-    over(build_sql(sql(f), list(x)), partition_group(), partition_order(), frame = c(-Inf, 0))
+    over(build_sql(sql(f), list(x)),
+                   partition_group(),
+                   partition_order(),
+                   frame = c(-Inf, 0),
+                   con = partition_con())
   }
 }
 
@@ -177,6 +184,7 @@ win_absent <- function(f) {
 partition <- new.env(parent = emptyenv())
 partition$group_by <- NULL
 partition$order_by <- NULL
+partition$con <- NULL
 
 set_partition_group <- function(vars) {
   stopifnot(is.null(vars) || is.character(vars))
@@ -194,7 +202,13 @@ set_partition_order <- function(vars) {
   invisible(old)
 }
 
-set_partition <- function(group_by, order_by) {
+set_partition_con <- function(con) {
+  old <- partition$con
+  partition$con <- con
+  invisible(old)
+}
+
+set_partition <- function(group_by, order_by, con = NULL) {
   old <- list(partition$group_by, partition$order_by)
   if (is.list(group_by)) {
     order_by <- group_by[[2]]
@@ -203,9 +217,11 @@ set_partition <- function(group_by, order_by) {
 
   partition$group_by <- group_by
   partition$order_by <- order_by
+  partition$con <- con
 
   invisible(old)
 }
 
 partition_group <- function() partition$group_by
 partition_order <- function() partition$order_by
+partition_con <- function() partition$con
