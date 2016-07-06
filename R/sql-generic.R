@@ -107,7 +107,7 @@ sql_join.default <- function(con, x, y, type = "inner", by = NULL, ...) {
   cond <- build_sql("ON ", on, con = con)
 
   build_sql(
-    'SELECT * FROM ',x, "\n\n",
+    x, "\n\n",
     join, " JOIN\n\n" ,
     y, "\n\n",
     cond,
