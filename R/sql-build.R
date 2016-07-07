@@ -196,16 +196,15 @@ sql_build.op_join <- function(op, con, ...) {
     by$x <- unname(uniques$x[by$x])
     by$y <- unname(uniques$y[by$y])
 
-    select_query(
-      join_query(x, y,
-                 type = op$args$type,
-                 by = by
-      ),
-      select = ident(unlist(c(
-        unname(x_names_no_xy),
-        unname(y_names_no_xy),
-        uniques$x[xy_by]
-      )))
+    join_query(x,
+               y,
+               type = op$args$type,
+               by = by,
+               select = ident(unlist(c(
+                 unname(x_names_no_xy),
+                 unname(y_names_no_xy),
+                 uniques$x[xy_by]
+               )))
     )
   }
 }

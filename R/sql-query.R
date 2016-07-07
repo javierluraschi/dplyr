@@ -52,14 +52,20 @@ print.select_query <- function(x, ...) {
 
 #' @export
 #' @rdname sql_build
-join_query <- function(x, y, type = "inner", by = NULL, suffix = c(".x", ".y")) {
+join_query <- function(x,
+                       y,
+                       type = "inner",
+                       by = NULL,
+                       suffix = c(".x", ".y"),
+                       select = NULL) {
   structure(
     list(
       x = x,
       y = y,
       type = type,
       by = by,
-      suffix = suffix
+      suffix = suffix,
+      select = select
     ),
     class = c("join_query", "query")
   )

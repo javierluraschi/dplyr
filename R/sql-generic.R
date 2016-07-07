@@ -75,25 +75,31 @@ sql_select.default <- function(con, select, from, where = NULL,
 
 #' @export
 #' @rdname backend_sql
-sql_subquery <- function(con, from, name = random_table_name(), ...) {
+sql_subquery <- function(con, from, name = random_table_name(), parenthesis = TRUE, ...) {
   UseMethod("sql_subquery")
 }
 #' @export
-sql_subquery.default <- function(con, from, name = unique_name(), ...) {
+sql_subquery.default <- function(con, from, name = unique_name(), parenthesis = TRUE, ...) {
   if (is.ident(from)) {
     setNames(from, name)
   } else {
-    build_sql("(", from, ") ", ident(name %||% random_table_name()), con = con)
+    identName <- ident(name %||% random_table_name())
+    if (parenthesis) {
+      build_sql("(", from, ") ", identName, con = con)
+    } else {
+      build_sql(from, " ", identName, con = con)
+    }
   }
 }
 
 #' @rdname backend_sql
 #' @export
-sql_join <- function(con, x, y, type = "inner", by = NULL, ...) {
+sql_join <- function(con, x, y, type = "inner", by = NULL, select = NULL, ...) {
   UseMethod("sql_join")
 }
+
 #' @export
-sql_join.default <- function(con, x, y, type = "inner", by = NULL, ...) {
+sql_join.default <- function(con, x, y, type = "inner", by = NULL, select = NULL, ...) {
   join <- switch(type,
     left = sql("LEFT"),
     inner = sql("INNER"),
